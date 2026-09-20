@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "60044117561",
+    "project_id": "bossgrad-5e8b4",
+    "storage_bucket": "bossgrad-5e8b4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60044117561:android:e291f7b80b29de17b4afe8",
+        "android_client_info": {
+          "package_name": "com.bossgrad.bossgrad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDalL9IuZyD9-yuYe4O4U1lnoGGIZFWg2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
