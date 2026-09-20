@@ -3,7 +3,9 @@ name: Build and Release BossGrad Android APK
 on:
   push:
     tags:
-      - "v*.*.*" # Triggers when you push a tag like v1.0.5
+      - "v*.*.*"
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -50,6 +52,8 @@ jobs:
 
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: build/app/outputs/flutter-apk/app-release.apk
           name: Release ${{ github.ref_name }}
