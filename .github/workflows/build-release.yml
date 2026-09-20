@@ -41,12 +41,12 @@ jobs:
           storeFile=release-key.jks
           EOF
 
-      - name: Build Fat APK
-        run: flutter build apk --release
-
       - name: Create .env file from secret
         run: |
           echo "${{ secrets.ENV_BASE64 }}" | base64 --decode > .env
+
+      - name: Build Fat APK
+        run: flutter build apk --release
 
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
@@ -56,3 +56,6 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
+
+# git tag v1.0.5
+# git push origin v1.0.5
