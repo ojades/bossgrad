@@ -2,6 +2,7 @@ import 'package:bossgrad/core/http_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme/boss_theme.dart';
@@ -117,7 +118,9 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Database sync failed. Please try again.'),
+          content: Text(
+            'Database sync failed. Please try again: ${dotenv.env['API_BASE_URL']}',
+          ),
           backgroundColor: BossColors.bossRed,
         ),
       );
