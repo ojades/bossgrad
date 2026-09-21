@@ -5,6 +5,7 @@ import 'package:bossgrad/features/auth/parent_auth_screen.dart';
 import 'package:bossgrad/features/auth/role_selection_screen.dart';
 import 'package:bossgrad/features/child_hub/child_root_layout.dart';
 import 'package:bossgrad/features/root_layout.dart';
+import 'package:bossgrad/shared/widgets/update_modal_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,7 +52,6 @@ class BossGradApp extends StatelessWidget {
           ),
         ],
       ),
-      // We declare a named route so pushNamedAndRemoveUntil('/') works
       initialRoute: '/',
       routes: {'/': (context) => const AuthRouter()},
     );
@@ -68,9 +68,17 @@ class AuthRouter extends StatefulWidget {
 class _AuthRouterState extends State<AuthRouter> {
   final PageController _pageController = PageController(initialPage: 0);
 
-  // Variables to ensure we only verify the user once per session load
   User? _lastCheckedUser;
   Future<String?>? _verificationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateModalDialog.checkAndShow(context);
+    });
+  }
 
   @override
   void dispose() {
@@ -86,7 +94,6 @@ class _AuthRouterState extends State<AuthRouter> {
     );
   }
 
-  /// Forces a server-side check of the cached token, AND retrieves the active role.
   Future<String?> _verifyUserAndRole(User user) async {
     try {
       await user.reload();
@@ -102,7 +109,7 @@ class _AuthRouterState extends State<AuthRouter> {
     }
 
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('active_role'); // Returns 'parent', 'child', or null
+    return prefs.getString('active_role');
   }
 
   Widget _buildAuthFlow() {
@@ -117,8 +124,6 @@ class _AuthRouterState extends State<AuthRouter> {
         ParentAuthScreen(
           onBack: () => _slideCameraTo(0),
           onLogin: () {
-            // When login succeeds on a device that was ALREADY bound, the Firebase Stream
-            // won't fire. We must manually trigger verification to pick up the new 'active_role'.
             if (FirebaseAuth.instance.currentUser != null) {
               setState(() {
                 _verificationFuture = _verifyUserAndRole(
@@ -157,12 +162,10 @@ class _AuthRouterState extends State<AuthRouter> {
 
         final user = snapshot.data;
 
-        // NO LOCAL USER -> Show Auth Flow
         if (user == null) {
           return _buildAuthFlow();
         }
 
-        // LOCAL USER DETECTED -> Run Verification
         if (_lastCheckedUser?.uid != user.uid || _verificationFuture == null) {
           _lastCheckedUser = user;
           _verificationFuture = _verifyUserAndRole(user);
@@ -171,7 +174,6 @@ class _AuthRouterState extends State<AuthRouter> {
         return FutureBuilder<String?>(
           future: _verificationFuture,
           builder: (context, verifySnapshot) {
-            // While checking the server and local storage, show a loading state
             if (verifySnapshot.connectionState == ConnectionState.waiting) {
               return const Scaffold(
                 body: Center(child: CircularProgressIndicator()),
@@ -180,14 +182,12 @@ class _AuthRouterState extends State<AuthRouter> {
 
             final activeRole = verifySnapshot.data;
 
-            // Route based on active role
             if (activeRole == 'parent') {
               return const RootLayout();
             } else if (activeRole == 'child') {
               return const ChildRootLayout();
             }
 
-            // User is valid (device is bound), but NO active session (they logged out)
             return _buildAuthFlow();
           },
         );

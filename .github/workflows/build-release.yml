@@ -50,6 +50,9 @@ jobs:
       - name: Build Fat APK
         run: flutter build apk --release
 
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/bossgrad-${{ github.ref_name }}.apk
+
       - name: Publish to GitHub Releases
         uses: softprops/action-gh-release@v2
         env:

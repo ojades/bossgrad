@@ -1,6 +1,7 @@
 // /lib/core/updater_service.dart
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
@@ -15,6 +16,10 @@ class UpdaterService {
 
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
+
+      debugPrint(
+        'Current version: $currentVersion, latest version: ${data['latest_version']}',
+      );
 
       // Basic string comparison (Consider a proper semver package for production)
       if (data['latest_version'] != currentVersion) {
@@ -34,6 +39,7 @@ class UpdaterService {
       final tempDir = await getTemporaryDirectory();
       final savePath = '${tempDir.path}/bossgrad_update.apk';
 
+      debugPrint('Downloading update from $url to $savePath');
       // Download the APK using Dio
       await Dio().download(
         url,
