@@ -125,11 +125,23 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
         ),
       );
     } on FirebaseAuthException catch (e) {
+      String errorMsg = 'Sync failed. ';
+      if (e.response != null) {
+        errorMsg += 'Server returned ${e.response?.statusCode}.';
+      } else {
+        errorMsg += 'Network error: ${e.type.name}';
+      }
+
+      debugPrint(
+        'Flask DB Sync Failed: ${dotenv.env['API_BASE_URL']} -  ${e.message} - ${e.response?.data}',
+      );
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.message ?? 'Authentication failed'),
+          content: Text(errorMsg),
           backgroundColor: BossColors.bossRed,
+          duration: const Duration(seconds: 5),
         ),
       );
     } finally {
