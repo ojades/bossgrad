@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,6 +53,7 @@ class _QuestPlayScreenState extends State<QuestPlayScreen>
   @override
   void initState() {
     super.initState();
+    AudioService().playBgm('quest_play.wav');
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
     _attemptId = widget.battleData['attempt_id'];
@@ -174,7 +176,10 @@ class _QuestPlayScreenState extends State<QuestPlayScreen>
             ),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () => {
+              AudioService().playBgm('quest_map.wav'),
+              Navigator.pop(ctx, true),
+            },
             child: const Text(
               'Retreat',
               style: TextStyle(

@@ -1,3 +1,4 @@
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:bossgrad/core/http_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
   @override
   void initState() {
     super.initState();
+    AudioService().playBgm('auth.wav');
     _loadSavedIdentity();
   }
 
@@ -108,22 +110,20 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
       await prefs.setString('parent_uid', parentId);
       await prefs.setString('parent_email', _emailController.text.trim());
       await prefs.setString('parent_name', _displayName);
-      await prefs.setString('active_role', 'parent'); // Logged in as parent
-
+      await prefs.setString('active_role', 'parent');
       if (mounted) {
+        AudioService().stopBgm();
         widget.onLogin();
       }
     } on DioException catch (e) {
-      String errorMsg = 'Sync failed. ';
+      String errorMsg = 'Sync failed - ${dotenv.env['API_BASE_URL']} - ';
       if (e.response != null) {
         errorMsg += 'Server returned ${e.response?.statusCode}.';
       } else {
         errorMsg += 'Network error: ${e.type.name}';
       }
 
-      debugPrint(
-        'Flask DB Sync Failed: ${dotenv.env['API_BASE_URL']} - ${e.message} - ${e.response?.data}',
-      );
+      debugPrint('Flask DB Sync Failed: ${e.message} - ${e.response?.data}');
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +190,10 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: widget.onBack,
+                      onTap: () => {
+                        AudioService().playSfx('click.mp3'),
+                        widget.onBack(),
+                      },
                       child: const Text(
                         '‹ Choose another role',
                         style: TextStyle(
@@ -334,7 +337,12 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _isLoading ? null : _authenticate,
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                AudioService().playSfx('click.mp3');
+                                _authenticate();
+                              },
                         style:
                             ElevatedButton.styleFrom(
                               backgroundColor: theme.primaryAction,

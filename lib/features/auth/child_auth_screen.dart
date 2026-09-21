@@ -1,3 +1,4 @@
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:bossgrad/core/http_client.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,7 @@ class _ChildAuthScreenState extends State<ChildAuthScreen> {
   @override
   void initState() {
     super.initState();
+    AudioService().playBgm('auth.wav');
     _fetchChildren();
   }
 
@@ -202,7 +204,10 @@ class _ChildAuthScreenState extends State<ChildAuthScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: GestureDetector(
-                        onTap: widget.onBack,
+                        onTap: () => {
+                          AudioService().playSfx('click.mp3'),
+                          widget.onBack(),
+                        },
                         child: const Text(
                           '‹ Choose another role',
                           style: TextStyle(

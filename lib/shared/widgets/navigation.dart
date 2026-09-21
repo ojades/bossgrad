@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -262,7 +263,10 @@ class BossBottomNav extends StatelessWidget {
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => onTabSelected(config.id),
+        onTap: () => {
+          onTabSelected(config.id),
+          AudioService().playSfx('btn_click.wav'),
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,

@@ -122,9 +122,11 @@ class TopHeader extends StatelessWidget {
                         onPressed: () async {
                           Navigator.of(context).pop();
                           final prefs = await SharedPreferences.getInstance();
-                          // await FirebaseAuth.instance.signOut();
+                          await FirebaseAuth.instance.signOut();
                           await prefs.remove('active_role');
                           await prefs.remove('child_name');
+                          await prefs.remove('child_id');
+                          await prefs.remove('child_uid');
                           if (context.mounted) {
                             Navigator.of(context)
                                 .pushNamedAndRemoveUntil('/', (route) => false);

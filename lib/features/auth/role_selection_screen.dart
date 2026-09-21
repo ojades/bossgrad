@@ -1,8 +1,9 @@
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/theme/boss_theme.dart';
 
-class RoleSelectionScreen extends StatelessWidget {
+class RoleSelectionScreen extends StatefulWidget {
   final VoidCallback onParentSelected;
   final VoidCallback onChildSelected;
 
@@ -11,6 +12,20 @@ class RoleSelectionScreen extends StatelessWidget {
     required this.onParentSelected,
     required this.onChildSelected,
   });
+  @override
+  State<RoleSelectionScreen> createState() => _RoleSelectionScreenState();
+}
+
+class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (mounted) {
+        AudioService().playBgm('auth.wav');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +173,10 @@ class RoleSelectionScreen extends StatelessWidget {
                       icon: Icons.shield_outlined,
                       iconBg: const Color(0xFFEEE8FF),
                       iconColor: theme.primaryAction,
-                      onTap: onParentSelected,
+                      onTap: () {
+                        AudioService().playSfx('btn_click.wav');
+                        widget.onParentSelected();
+                      },
                     ),
                     const SizedBox(height: 10),
                     _RoleCard(
@@ -167,7 +185,10 @@ class RoleSelectionScreen extends StatelessWidget {
                       icon: Icons.sports_esports_outlined,
                       iconBg: const Color(0xFFFFF1AE),
                       iconColor: const Color(0xFF9C7200),
-                      onTap: onChildSelected,
+                      onTap: () {
+                        AudioService().playSfx('btn_click.wav');
+                        widget.onChildSelected();
+                      },
                     ),
                     const SizedBox(height: 16),
                     const Text(

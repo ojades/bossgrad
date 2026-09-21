@@ -1,3 +1,4 @@
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -32,9 +33,7 @@ class QuestMapCard extends StatefulWidget {
 class _QuestMapCardState extends State<QuestMapCard> {
   final ScrollController _scrollController = ScrollController();
   static const double _rowHeight = 110.0;
-  static const double _topPadding =
-      40.0; // Increased to accommodate floating pills
-
+  static const double _topPadding = 40.0;
   @override
   void initState() {
     super.initState();
@@ -200,6 +199,9 @@ class _QuestMapCardState extends State<QuestMapCard> {
 
                                       GestureDetector(
                                         onTap: () async {
+                                          AudioService().playSfx(
+                                            'btn_click.wav',
+                                          );
                                           if (topic['state'] != 'locked') {
                                             if (topic['state'] == 'done' &&
                                                 topic['result_data'] != null) {
@@ -329,7 +331,10 @@ class _QuestMapCardState extends State<QuestMapCard> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: GestureDetector(
-                          onTap: () => widget.onSubjectChanged(subject),
+                          onTap: () => {
+                            AudioService().playSfx('btn_click.wav'),
+                            widget.onSubjectChanged(subject),
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,

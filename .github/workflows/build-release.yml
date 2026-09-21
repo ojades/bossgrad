@@ -55,7 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/bossgrad-${{ github.ref_name }}.apk
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false

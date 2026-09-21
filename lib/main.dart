@@ -1,3 +1,4 @@
+import 'package:bossgrad/core/audio_service.dart';
 import 'package:bossgrad/core/theme/boss_theme.dart';
 import 'package:bossgrad/features/auth/child_auth_screen.dart';
 import 'package:bossgrad/features/auth/parent_auth_screen.dart';
@@ -25,6 +26,7 @@ Future<void> main() async {
   ]);
 
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await AudioService().init();
 
   runApp(const BossGradApp());
 }
