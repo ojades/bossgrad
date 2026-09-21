@@ -114,17 +114,6 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
         widget.onLogin();
       }
     } on DioException catch (e) {
-      debugPrint('Flask DB Sync Failed: ${e.message}');
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Database sync failed. Please try again: ${dotenv.env['API_BASE_URL']}',
-          ),
-          backgroundColor: BossColors.bossRed,
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
       String errorMsg = 'Sync failed. ';
       if (e.response != null) {
         errorMsg += 'Server returned ${e.response?.statusCode}.';
@@ -133,7 +122,7 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
       }
 
       debugPrint(
-        'Flask DB Sync Failed: ${dotenv.env['API_BASE_URL']} -  ${e.message} - ${e.response?.data}',
+        'Flask DB Sync Failed: ${dotenv.env['API_BASE_URL']} - ${e.message} - ${e.response?.data}',
       );
 
       if (!mounted) return;
@@ -142,6 +131,14 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
           content: Text(errorMsg),
           backgroundColor: BossColors.bossRed,
           duration: const Duration(seconds: 5),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message ?? 'Authentication failed'),
+          backgroundColor: BossColors.bossRed,
         ),
       );
     } finally {
