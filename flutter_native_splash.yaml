@@ -1,0 +1,8 @@
+flutter_native_splash:
+  color: "#241642"
+  image: "assets/images/bossgrad_logo_icon.png"
+  android: true
+  ios: true
+  android_12:
+    color: "#241642"
+    image: "assets/images/bossgrad_logo_icon.png"

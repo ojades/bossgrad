@@ -48,7 +48,11 @@ jobs:
           echo "${{ secrets.ENV_BASE64 }}" | base64 --decode > .env
 
       - name: Build Fat APK
-        run: flutter build apk --release
+        run: |
+          RAW_TAG="${{ github.ref_name }}"
+          VERSION_NAME="${RAW_TAG#v}"
+
+          flutter build apk --release --build-name=$VERSION_NAME --build-number=${{ github.run_number }}
 
       - name: Rename APK
         run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/bossgrad-${{ github.ref_name }}.apk

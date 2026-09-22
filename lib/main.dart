@@ -6,6 +6,7 @@ import 'package:bossgrad/features/auth/role_selection_screen.dart';
 import 'package:bossgrad/features/child_hub/child_root_layout.dart';
 import 'package:bossgrad/features/root_layout.dart';
 import 'package:bossgrad/shared/widgets/update_modal_dialog.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/splash/splash/splash_screen.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -28,6 +30,7 @@ Future<void> main() async {
 
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await AudioService().init();
+  await WakelockPlus.enable();
 
   runApp(const BossGradApp());
 }
@@ -67,6 +70,7 @@ class AuthRouter extends StatefulWidget {
 
 class _AuthRouterState extends State<AuthRouter> {
   final PageController _pageController = PageController(initialPage: 0);
+  bool _showSplash = true;
 
   User? _lastCheckedUser;
   Future<String?>? _verificationFuture;
@@ -151,6 +155,14 @@ class _AuthRouterState extends State<AuthRouter> {
 
   @override
   Widget build(BuildContext context) {
+    if (_showSplash) {
+      return AnimatedSplashScreen(
+        onComplete: () {
+          setState(() => _showSplash = false);
+        },
+      );
+    }
+
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
