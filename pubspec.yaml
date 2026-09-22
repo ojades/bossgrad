@@ -53,6 +53,7 @@ dependencies:
   wakelock_plus: ^1.2.8
 dev_dependencies:
   flutter_native_splash: ^2.4.8
+  flutter_launcher_icons: "^0.14.4"
   flutter_test:
     sdk: flutter
 
@@ -76,6 +77,12 @@ flutter:
     - .env
     - assets/audio/
     - assets/images/
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/bossgrad_logo_icon.png"
+  adaptive_icon_background: "#241642"
+  adaptive_icon_foreground: "assets/images/bossgrad_logo_icon.png"
 
   # To add assets to your application, add an assets section, like this:
   # assets:
