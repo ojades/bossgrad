@@ -79,9 +79,9 @@ class _AuthRouterState extends State<AuthRouter> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      UpdateModalDialog.checkAndShow(context);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   UpdateModalDialog.checkAndShow(context);
+    // });
   }
 
   @override

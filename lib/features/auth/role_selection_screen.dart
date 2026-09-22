@@ -45,11 +45,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              // Reduced outer vertical padding
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 480),
-                // Reduced inner vertical padding
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 24,
@@ -70,52 +68,23 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // ---> UPDATED BRANDING HEADER <---
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          width: 36, // Slightly smaller logo
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: theme.primaryAction,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color(0xFF4D2AB4),
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.workspace_premium,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                        Image.asset(
+                          'assets/images/bossgrad_logo_icon.png',
+                          width: 44,
+                          height: 44,
                         ),
-                        const SizedBox(width: 10),
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                              fontFamily: 'Fredoka',
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                              color: BossColors.backgroundSlate,
-                            ),
-                            children: [
-                              const TextSpan(
-                                text: 'Boss',
-                                style: TextStyle(color: Color(0xFF172033)),
-                              ),
-                              TextSpan(
-                                text: 'Grad',
-                                style: TextStyle(color: theme.primaryAction),
-                              ),
-                            ],
-                          ),
+                        const SizedBox(width: 12),
+                        Image.asset(
+                          'assets/images/bossgrad-logo_name.png',
+                          height: 28,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16), // Tighter spacing
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -142,7 +111,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                       text: TextSpan(
                         style: const TextStyle(
                           fontFamily: 'Fredoka',
-                          fontSize: 34, // Scaled down from 42 for landscape fit
+                          fontSize: 34,
                           fontWeight: FontWeight.w900,
                           height: 1.1,
                           color: Color(0xFF172033),
@@ -166,7 +135,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 20), // Tighter spacing before cards
+                    const SizedBox(height: 20),
                     _RoleCard(
                       title: 'I\'m a parent',
                       subtitle: 'Mission control & family progress',
@@ -232,25 +201,19 @@ class _RoleCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ), // Reduced card padding
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFE8DEF5), width: 3),
           boxShadow: const [
-            BoxShadow(
-              color: Color(0xFFDFD1EF),
-              offset: Offset(0, 4),
-            ), // Smaller shadow for compact fit
+            BoxShadow(color: Color(0xFFDFD1EF), offset: Offset(0, 4)),
           ],
         ),
         child: Row(
           children: [
             Container(
-              width: 44, // Slightly smaller icon box
+              width: 44,
               height: 44,
               decoration: BoxDecoration(
                 color: iconBg,

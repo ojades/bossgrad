@@ -527,7 +527,10 @@ class _QuestPlayScreenState extends State<QuestPlayScreen>
                             }
 
                             return GestureDetector(
-                              onTap: () => _submitAnswer(questionId, i),
+                              onTap: () => {
+                                AudioService().playSfx('option_select.wav'),
+                                _submitAnswer(questionId, i),
+                              },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
@@ -621,7 +624,10 @@ class _QuestPlayScreenState extends State<QuestPlayScreen>
                       if (_currentIndex > 0)
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => setState(() => _currentIndex--),
+                            onPressed: () => {
+                              AudioService().playSfx('q_next.wav'),
+                              setState(() => _currentIndex--),
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               side: const BorderSide(
@@ -647,6 +653,7 @@ class _QuestPlayScreenState extends State<QuestPlayScreen>
                         flex: 2,
                         child: ElevatedButton(
                           onPressed: () {
+                            AudioService().playSfx('q_next.wav');
                             if (_currentIndex < _questions.length - 1) {
                               setState(() => _currentIndex++);
                             } else if (hasAnsweredAll && !_isSubmitting) {

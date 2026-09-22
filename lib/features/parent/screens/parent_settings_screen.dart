@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/http_client.dart';
 import '../../../core/theme/boss_theme.dart';
+import '../../../shared/widgets/update_modal_dialog.dart';
 
 class ParentSettingsScreen extends StatefulWidget {
   const ParentSettingsScreen({super.key});
@@ -15,6 +17,7 @@ class ParentSettingsScreen extends StatefulWidget {
 class _ParentSettingsScreenState extends State<ParentSettingsScreen> {
   bool _isLoading = true;
   String _displayName = '';
+  String _appVersion = '';
 
   List<dynamic> _subjects = [];
   List<dynamic> _grades = [];
@@ -39,6 +42,10 @@ class _ParentSettingsScreenState extends State<ParentSettingsScreen> {
       final prefs = await SharedPreferences.getInstance();
       _displayName = prefs.getString('parent_name') ?? 'Commander';
       _nameController.text = _displayName;
+
+      // Fetch package info dynamically
+      final packageInfo = await PackageInfo.fromPlatform();
+      _appVersion = 'v${packageInfo.version} (${packageInfo.buildNumber})';
 
       final responses = await Future.wait([
         HttpClient().dio.get('/api/boss/subjects'),
@@ -384,6 +391,68 @@ class _ParentSettingsScreenState extends State<ParentSettingsScreen> {
                           )
                           .toList(),
                     ),
+            ),
+            const SizedBox(height: 24),
+
+            // 5. APP VERSION & ABOUT CARD
+            _buildSettingsCard(
+              title: 'App Version',
+              icon: LucideIcons.info,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'BossGrad Mobile',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                          color: Color(0xFF241642),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _appVersion.isEmpty ? 'Loading...' : _appVersion,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: Color(0xFF756B91),
+                        ),
+                      ),
+                    ],
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => UpdateModalDialog.checkAndShow(
+                      context,
+                      showUpToDateMessage: true,
+                    ),
+                    icon: const Icon(LucideIcons.refreshCw, size: 14),
+                    label: const Text(
+                      'Check Updates',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.primaryAction,
+                      side: BorderSide(
+                        color: const Color(0xFFE5D9F4),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ],

@@ -9,10 +9,15 @@ class UpdateModalDialog extends StatefulWidget {
   const UpdateModalDialog({super.key, required this.updateData});
 
   /// Helper method to cleanly run the check and show the dialog if an update exists.
-  static Future<void> checkAndShow(BuildContext context) async {
+  static Future<void> checkAndShow(
+    BuildContext context, {
+    bool showUpToDateMessage = false,
+  }) async {
     final updateData = await UpdaterService.checkForUpdate();
 
-    if (updateData != null && context.mounted) {
+    if (!context.mounted) return;
+
+    if (updateData != null) {
       final bool forceUpdate = updateData['force_update'] ?? false;
 
       showDialog(
@@ -24,6 +29,18 @@ class UpdateModalDialog extends StatefulWidget {
             child: UpdateModalDialog(updateData: updateData),
           );
         },
+      );
+    } else if (showUpToDateMessage) {
+      // Show feedback only if specifically requested
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Your app is already up to date! 🎉',
+            style: TextStyle(fontWeight: FontWeight.w800),
+          ),
+          backgroundColor: Color(0xFF28C995), // Success green
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }

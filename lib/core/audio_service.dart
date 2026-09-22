@@ -7,16 +7,42 @@ class AudioService with WidgetsBindingObserver {
   AudioService._internal();
 
   final AudioPlayer _bgmPlayer = AudioPlayer();
-  final AudioPlayer _sfxPlayer = AudioPlayer();
+
+  // 1. Create a pool of SFX players
+  static const int _sfxPoolSize = 4;
+  final List<AudioPlayer> _sfxPlayers = [];
+  int _currentSfxIndex = 0;
 
   String? _currentBgm;
   bool _isAppInBackground = false;
 
   Future<void> init() async {
-    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
-    await _sfxPlayer.setPlayerMode(PlayerMode.lowLatency);
+    await AudioPlayer.global.setAudioContext(
+      AudioContext(
+        android: const AudioContextAndroid(
+          isSpeakerphoneOn: false,
+          audioMode: AndroidAudioMode.normal,
+          stayAwake: true,
+          contentType: AndroidContentType.music,
+          usageType: AndroidUsageType.game,
+          audioFocus: AndroidAudioFocus.none,
+        ),
+        iOS: AudioContextIOS(
+          category: AVAudioSessionCategory.ambient,
+          options: const {},
+        ),
+      ),
+    );
 
-    // Register the audio service to listen to global app lifecycle changes
+    await _bgmPlayer.setReleaseMode(ReleaseMode.loop);
+
+    // 2. Pre-warm the SFX players so they are ready instantly
+    for (int i = 0; i < _sfxPoolSize; i++) {
+      final player = AudioPlayer();
+      await player.setPlayerMode(PlayerMode.lowLatency);
+      _sfxPlayers.add(player);
+    }
+
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -29,7 +55,6 @@ class AudioService with WidgetsBindingObserver {
       _bgmPlayer.pause();
     } else if (state == AppLifecycleState.resumed) {
       _isAppInBackground = false;
-
       if (_currentBgm != null) {
         _bgmPlayer.resume();
       }
@@ -37,7 +62,13 @@ class AudioService with WidgetsBindingObserver {
   }
 
   Future<void> playSfx(String fileName) async {
-    await _sfxPlayer.play(AssetSource('audio/$fileName'));
+    // 3. Grab the next available player in the pool (Round-Robin)
+    final player = _sfxPlayers[_currentSfxIndex];
+    _currentSfxIndex = (_currentSfxIndex + 1) % _sfxPoolSize;
+
+    // Stop anything that might still be playing on this specific channel, then play
+    await player.stop();
+    await player.play(AssetSource('audio/$fileName'));
   }
 
   Future<void> playBgm(String fileName) async {
@@ -60,6 +91,10 @@ class AudioService with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _bgmPlayer.dispose();
-    _sfxPlayer.dispose();
+
+    // 4. Dispose the pool safely
+    for (var player in _sfxPlayers) {
+      player.dispose();
+    }
   }
 }

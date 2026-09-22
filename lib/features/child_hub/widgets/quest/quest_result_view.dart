@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-class QuestResultView extends StatelessWidget {
+import '../../../../core/audio_service.dart';
+
+class QuestResultView extends StatefulWidget {
   final int stars;
   final int score;
   final int coins;
@@ -24,6 +26,17 @@ class QuestResultView extends StatelessWidget {
     required this.onReturn,
     this.onRematch,
   });
+
+  @override
+  State<QuestResultView> createState() => _QuestResultViewState();
+}
+
+class _QuestResultViewState extends State<QuestResultView> {
+  @override
+  void initState() {
+    super.initState();
+    AudioService().playBgm('q_result_4.wav');
+  }
 
   String _formatTime(int seconds) {
     final m = (seconds / 60).floor().toString().padLeft(2, '0');
@@ -57,7 +70,7 @@ class QuestResultView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
-                final isEarned = index < stars;
+                final isEarned = index < widget.stars;
                 return Padding(
                   padding: EdgeInsets.only(
                     left: 4,
@@ -80,13 +93,13 @@ class QuestResultView extends StatelessWidget {
 
             // Title
             Text(
-              stars > 0 ? 'LEVEL CLEARED!' : 'BOSS ESCAPED!',
+              widget.stars > 0 ? 'LEVEL CLEARED!' : 'BOSS ESCAPED!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Fredoka',
                 fontSize: 32,
                 fontWeight: FontWeight.w900,
-                color: stars > 0
+                color: widget.stars > 0
                     ? const Color(0xFF28C995)
                     : const Color(0xFFFF6578),
                 letterSpacing: -1,
@@ -94,7 +107,9 @@ class QuestResultView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              stars > 0 ? 'You dealt massive damage and gathered the loot.' : 'You didn\'t get enough right to clear the level. Try again!',
+              widget.stars > 0
+                  ? 'You dealt massive damage and gathered the loot.'
+                  : 'You didn\'t get enough right to clear the level. Try again!',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF756B91),
@@ -112,22 +127,22 @@ class QuestResultView extends StatelessWidget {
               children: [
                 ResultStatBadge(
                   icon: LucideIcons.target,
-                  label: '$correctQs / $totalQs',
+                  label: '${widget.correctQs} / ${widget.totalQs}',
                   color: const Color(0xFF159A72),
                 ),
                 ResultStatBadge(
                   icon: LucideIcons.timer,
-                  label: _formatTime(timeTakenSeconds),
+                  label: _formatTime(widget.timeTakenSeconds),
                   color: const Color(0xFFFF6578),
                 ),
                 ResultStatBadge(
                   icon: LucideIcons.zap,
-                  label: '+$score XP',
+                  label: '+${widget.score} XP',
                   color: const Color(0xFF7447F5),
                 ),
                 ResultStatBadge(
                   icon: LucideIcons.coins,
-                  label: '+$coins',
+                  label: '+${widget.coins}',
                   color: const Color(0xFFD89400),
                 ),
               ],
@@ -139,7 +154,10 @@ class QuestResultView extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: onReturn,
+                    onPressed: () {
+                      AudioService().playSfx('btn_click.wav');
+                      widget.onReturn();
+                    },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       side: const BorderSide(
@@ -161,11 +179,14 @@ class QuestResultView extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (canRematch && onRematch != null) ...[
+                if (widget.canRematch && widget.onRematch != null) ...[
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: onRematch,
+                      onPressed: () {
+                        AudioService().playSfx('btn_click.wav');
+                        widget.onRematch!();
+                      },
                       style:
                           ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF7447F5),
@@ -203,6 +224,7 @@ class QuestResultView extends StatelessWidget {
   }
 }
 
+// ... ResultStatBadge remains unchanged ...
 class ResultStatBadge extends StatelessWidget {
   final IconData icon;
   final String label;
