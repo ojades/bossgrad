@@ -1,8 +1,11 @@
+// /lib/features/child_hub/screens/child_quest_screen.dart
+
 import 'package:bossgrad/core/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/child_stat_service.dart';
 import '../../../core/http_client.dart';
 import '../../../core/theme/boss_theme.dart';
 import '../../../shared/widgets/navigation.dart';
@@ -26,26 +29,22 @@ class _ChildQuestScreenState extends State<ChildQuestScreen> {
   List<Map<String, dynamic>> _currentTopics = [];
 
   int _totalLevels = 0;
-  String _childName = 'Player';
-
-  int _coins = 0;
-  int _xp = 0;
-  int _rank = 0;
+  // String _childName = 'Player';
 
   @override
   void initState() {
     super.initState();
     AudioService().playBgm('quest_map.wav');
-    _loadProfile();
+    // _loadProfile();
     _fetchQuestMap();
   }
 
-  Future<void> _loadProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _childName = prefs.getString('child_name') ?? 'Player';
-    });
-  }
+  // Future<void> _loadProfile() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     _childName = prefs.getString('child_name') ?? 'Player';
+  //   });
+  // }
 
   Future<void> _fetchQuestMap([String? subject]) async {
     setState(() => _isLoading = true);
@@ -63,13 +62,14 @@ class _ChildQuestScreenState extends State<ChildQuestScreen> {
         setState(() {
           _subjects = List<String>.from(response.data['subjects'] ?? []);
           _selectedSubject = response.data['selected_subject'] ?? '';
-
           _totalLevels = response.data['total_levels'] ?? 0;
 
           final stats = response.data['stats'] ?? {};
-          _coins = stats['coins'] ?? 0;
-          _xp = stats['xp'] ?? 0;
-          _rank = stats['rank'] ?? 0;
+          ChildStatsService().updateStats(
+            newCoins: stats['coins'],
+            newXp: stats['xp'],
+            newRank: stats['rank'],
+          );
 
           final rawTopics = response.data['topics'] as List<dynamic>? ?? [];
           _currentTopics = rawTopics.map((t) {
@@ -111,13 +111,9 @@ class _ChildQuestScreenState extends State<ChildQuestScreen> {
         children: [
           TopHeader(
             theme: theme,
-            displayName: _childName,
             role: UserRole.child,
             subjects: _subjects,
             selectedSubject: _selectedSubject,
-            coins: _coins,
-            xp: _xp,
-            rank: _rank,
             onSettingsTapped: widget.onSettingsTapped,
             onSubjectChanged: (subject) {
               if (subject != _selectedSubject) {

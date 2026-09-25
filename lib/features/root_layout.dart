@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bossgrad/core/http_client.dart';
 
 import '../shared/widgets/navigation.dart';
+import 'parent/screens/parent_rewards_screen.dart';
 
 class RootLayout extends StatefulWidget {
   const RootLayout({super.key});
@@ -29,6 +30,7 @@ class _RootLayoutState extends State<RootLayout> {
     NavPage.tools,
     NavPage.library,
     NavPage.settings,
+    NavPage.rewards,
   ];
 
   @override
@@ -80,6 +82,7 @@ class _RootLayoutState extends State<RootLayout> {
           ParentBossScreen(),
           ParentMissionControl(),
           ParentSettingsScreen(),
+          ParentRewardsScreen(),
         ],
       ),
     );

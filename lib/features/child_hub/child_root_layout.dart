@@ -1,4 +1,5 @@
 // /lib/features/child_hub/child_root_layout.dart
+import 'package:bossgrad/features/child_hub/screens/child_rewards_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +20,7 @@ class _ChildRootLayoutState extends State<ChildRootLayout> {
 
   final List<NavPage> _stackOrder = [
     NavPage.quest,
-    NavPage.boss,
+    NavPage.rewards,
     NavPage.profile,
   ];
 
@@ -46,12 +47,7 @@ class _ChildRootLayoutState extends State<ChildRootLayout> {
         index: _stackOrder.indexOf(_currentPage),
         children: const [
           ChildQuestScreen(),
-          Center(
-            child: Text(
-              'Claim Your Rewards Under Construction',
-              style: TextStyle(fontWeight: FontWeight.w800),
-            ),
-          ),
+          ChildRewardsScreen(),
           Center(
             child: Text(
               'Player Profile Under Construction',

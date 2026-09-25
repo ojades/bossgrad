@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:dio/dio.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/audio_service.dart';
 import '../../../core/http_client.dart';
 import '../../../core/theme/boss_theme.dart';
 
@@ -180,6 +181,7 @@ class _ParentBossScreenState extends State<ParentBossScreen> {
         );
 
         if (mounted) {
+          AudioService().playSfx('scan_success.wav'); // <--- PLAY SUCCESS
           setState(() {
             _generatedQuestions =
                 response.data['boss_level']['questions'] ?? [];
@@ -190,6 +192,7 @@ class _ParentBossScreenState extends State<ParentBossScreen> {
         }
       } on DioException catch (e) {
         if (mounted) {
+          AudioService().playSfx('scan_fail.wav'); // <--- PLAY FAIL
           setState(() {
             _isProcessing = false;
             _currentStep = 1;
@@ -235,6 +238,7 @@ class _ParentBossScreenState extends State<ParentBossScreen> {
           _uploadedImageUrl = response.data['image_url'];
 
           if (response.data['status'] == 'failed') {
+            AudioService().playSfx('scan_fail.wav');
             _currentStep = 1;
             _isProcessing = false;
             _clearImages();
@@ -247,6 +251,7 @@ class _ParentBossScreenState extends State<ParentBossScreen> {
               ),
             );
           } else {
+            AudioService().playSfx('scan_success.wav');
             _generatedQuestions = response.data['questions'] ?? [];
             _currentStep = 3;
             _isProcessing = false;
@@ -255,6 +260,7 @@ class _ParentBossScreenState extends State<ParentBossScreen> {
       }
     } on DioException catch (e) {
       if (mounted) {
+        AudioService().playSfx('scan_fail.wav');
         setState(() {
           _isProcessing = false;
           _currentStep = 1;

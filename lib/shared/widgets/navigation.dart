@@ -5,12 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../core/theme/boss_theme.dart';
-import '../../../core/widgets/arcade_components.dart';
-
 enum UserRole { parent, child }
 
-enum NavPage { quest, boss, mission, tools, profile, library, settings }
+enum NavPage {
+  quest,
+  boss,
+  mission,
+  tools,
+  profile,
+  library,
+  settings,
+  rewards,
+}
 
 class NavItemConfig {
   final NavPage id;
@@ -170,7 +176,7 @@ class BossTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink(); // Topbar logic removed as requested previously
+    return const SizedBox.shrink();
   }
 }
 
@@ -204,11 +210,20 @@ class BossBottomNav extends StatelessWidget {
       label: 'TOOLS',
       icon: LucideIcons.scanLine,
     ),
+    NavItemConfig(
+      id: NavPage.rewards,
+      label: 'REWARDS',
+      icon: LucideIcons.gift,
+    ),
   ];
 
   static const List<NavItemConfig> _childTabs = [
     NavItemConfig(id: NavPage.quest, label: 'QUEST', icon: LucideIcons.target),
-    NavItemConfig(id: NavPage.boss, label: 'REWARDS', icon: LucideIcons.gift),
+    NavItemConfig(
+      id: NavPage.rewards,
+      label: 'REWARDS',
+      icon: LucideIcons.gift,
+    ),
     NavItemConfig(
       id: NavPage.profile,
       label: 'PROFILE',

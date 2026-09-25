@@ -1,11 +1,11 @@
 import 'package:bossgrad/core/audio_service.dart';
+import 'package:bossgrad/core/child_stat_service.dart';
 import 'package:bossgrad/core/theme/boss_theme.dart';
 import 'package:bossgrad/features/auth/child_auth_screen.dart';
 import 'package:bossgrad/features/auth/parent_auth_screen.dart';
 import 'package:bossgrad/features/auth/role_selection_screen.dart';
 import 'package:bossgrad/features/child_hub/child_root_layout.dart';
 import 'package:bossgrad/features/root_layout.dart';
-import 'package:bossgrad/shared/widgets/update_modal_dialog.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,7 +30,12 @@ Future<void> main() async {
 
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   await AudioService().init();
-  await WakelockPlus.enable();
+  await ChildStatsService().init();
+  try {
+    await WakelockPlus.enable();
+  } catch (e) {
+    debugPrint('Wakelock could not be acquired: $e');
+  }
 
   runApp(const BossGradApp());
 }

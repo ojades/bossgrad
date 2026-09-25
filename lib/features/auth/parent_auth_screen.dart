@@ -69,6 +69,9 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
 
     setState(() => _isLoading = true);
 
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('active_role', 'parent');
+
     try {
       UserCredential userCredential;
 
@@ -97,7 +100,6 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
       }
 
       // Sync with Flask PostgreSQL Database
-      // (This creates the profile if new, or ignores if already exists)
       final res = await HttpClient().dio.post(
         '/api/auth/parent/sync',
         data: {'display_name': _displayName},
@@ -105,17 +107,18 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
 
       final String parentId = res.data['id'];
 
-      // Persist identity locally so the device remembers who owns it
-      final prefs = await SharedPreferences.getInstance();
+      // Persist the rest of the identity locally
       await prefs.setString('parent_uid', parentId);
       await prefs.setString('parent_email', _emailController.text.trim());
       await prefs.setString('parent_name', _displayName);
-      await prefs.setString('active_role', 'parent');
+
+      AudioService().stopBgm();
       if (mounted) {
-        AudioService().stopBgm();
         widget.onLogin();
       }
     } on DioException catch (e) {
+      await prefs.remove('active_role');
+
       String errorMsg = 'Sync failed - ${dotenv.env['API_BASE_URL']} - ';
       if (e.response != null) {
         errorMsg += 'Server returned ${e.response?.statusCode}.';
@@ -134,6 +137,8 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
         ),
       );
     } on FirebaseAuthException catch (e) {
+      await prefs.remove('active_role');
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/child_stat_service.dart';
 import '../../core/theme/boss_theme.dart';
 
 class ChildAuthScreen extends StatefulWidget {
@@ -96,10 +97,12 @@ class _ChildAuthScreenState extends State<ChildAuthScreen> {
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('active_role', 'child');
-      await prefs.setString(
-        'child_name',
-        res.data['display_name'] ?? _selectedChild!['name'],
-      );
+
+      final String actualName =
+          res.data['display_name'] ?? _selectedChild!['name'];
+      await prefs.setString('child_name', actualName);
+
+      ChildStatsService().updateStats(newName: actualName);
       await prefs.setString('child_id', _selectedChild!['id']);
 
       if (mounted) widget.onLogin();
